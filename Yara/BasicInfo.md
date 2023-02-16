@@ -217,7 +217,26 @@ Examining a PE file's contents is an essential technique in malware analysis; th
 ## 7. Other tools and Yara
 
 ### Yara Tools
+
+Knowing how to create custom Yara rules is useful, but luckily you don't have to create many rules from scratch to begin using Yara to search for evil. There are plenty of GitHub [resources](https://github.com/InQuest/awesome-yara) and open-source tools (along with commercial products) that can be utilized to leverage Yara in hunt operations and/or incident response engagements. 
+
+LOKI is a free open-source IOC (Indicator of Compromise) scanner created/written by Florian Roth.
+
+Based on the GitHub page, detection is based on 4 methods:
+
+1. File Name IOC Check
+2. Yara Rule Check __(we are here)__
+3. Hash Check
+4. C2 Back Connect Check
+
+There are additional checks that LOKI can be used for. For a full rundown, please reference the [GitHub readme](https://github.com/Neo23x0/Loki/blob/master/README.md).
+
+LOKI can be used on both Windows and Linux systems and can be downloaded [here](https://github.com/Neo23x0/Loki/releases).
+
 ### LOKI
+
 ### THOR
+
 ### FENRIR
+
 ### YAYA(Yet Another Yara Automaton)
