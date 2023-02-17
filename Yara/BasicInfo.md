@@ -196,7 +196,7 @@ rule helloworld_checker{
 }
 ```
 
-### 6. Yara Modules
+## 6. Yara Modules
 
 ### **Integrating With Other Libraries**
 
@@ -252,10 +252,61 @@ YAYA was created by the [EFF](https://www.eff.org/deeplinks/2020/09/introducing-
 
 Note: Currently, YAYA will only run on <u>Linux</u> systems.
 
-## 8. LOKI
+## 8. Using LOKI
 
-### Using LOKI
+As a security analyst, you may need to research various threat intelligence reports, blog postings, etc. and gather information on the latest tactics and techniques used in the wild, past or present. Typically in these readings, IOCs (hashes, IP addresses, domain names, etc.) will be shared so rules can be created to detect these threats in your environment, along with Yara rules. On the flip side, you might find yourself in a situation where you've encountered something unknown, that your security stack of tools can't/didn't detect. Using tools such as Loki, you will need to add your own rules based on your threat intelligence gathers or findings from an incident response engagement (forensics). 
+
+As mentioned before, Loki already has a set of Yara rules that we can benefit from and start scanning for evil on the endpoint straightaway.
+
+Note:
+
+   1. Run `python loki.py -h` to see what options are available.
+
+   2. If you are running Loki on your own system fiest time, the first command you should run is `--update`. This will add the `signature-base` directory, which Loki uses to scan for known evil.
+
+To run Loki, you can use the following command
+(note that I am calling Loki from within the file 1 directory which is the malwares I've prepared for testing ):
+
+![run](run.png)
+
+We can check the sample reasults:
+
+![warning](warning.png)
+
+From above we can see:
+1. Does Loki detect this file as **suspicious**
+2. Yara rule match on **webshell_metaslsoft**
+3. Loki classify this file as **Web Shell**
+4. **b374k 2.2** is the name and version of this hack tool
 
 ## 9. yarGen
+
+### Creating Yara rules with yarGen
+
+Sometimes we also need to create a Yara rule to detect this specific web shell in our environment, from below we can see the Loki didn't flag on file 2 and it will go undetected.
+
+![fail](fail.png)
+
+We can manually open the file and attempt to sift through lines upon lines of code to find possible strings that can be used in our newly created Yara rule.
+
+Foring checking how many lines this particular file has you can run the following: ```strings <file name> | wc -l```.
+
+![huge](huge.png)
+
+If you try to go through each string, line by line manually, you should quickly realize that this can be a daunting task. 
+
+Luckily, we can use [yarGen](https://github.com/Neo23x0/yarGen) (yes, another tool created by Florian Roth) to aid us with this task.
+
+What is yarGen? yarGen is a generator for YARA rules.
+
+From the README - "*The main principle is the creation of yara rules from strings found in malware files while removing all strings that also appear in goodware files. Therefore yarGen includes a big goodware strings and opcode database as ZIP archives that have to be extracted before the first use.*"
+
+Note: If you are running yarGen on your own system first time, you need to update it first by running the following command: `python3 yarGen.py --update`.
+
+
+This will update the good-opcodes and good-strings DB's from the online repository. This update will take a few minutes. 
+
+ Once it has been updated successfully, you'll see the following message at the end of the output.
+
 
 ## 10. Valhalla
