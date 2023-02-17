@@ -250,7 +250,7 @@ This is the 3rd [tool](https://github.com/Neo23x0/Fenrir) created by Neo23x0 (Fl
 
 YAYA was created by the [EFF](https://www.eff.org/deeplinks/2020/09/introducing-yaya-new-threat-hunting-tool-eff-threat-lab) (*Electronic Frontier Foundation*) and released in September 2020. Based on their website, *"YAYA is a new open-source tool to help researchers manage multiple YARA rule repositories. YAYA starts by importing a set of high-quality YARA rules and then lets researchers add their own rules, disable specific rulesets, and run scans of files."*
 
-Note: Currently, YAYA will only run on <u>Linux</u> systems.
+**Note**: Currently, YAYA will only run on <u>Linux</u> systems.
 
 ## 8. Using LOKI
 
@@ -258,7 +258,7 @@ As a security analyst, you may need to research various threat intelligence repo
 
 As mentioned before, Loki already has a set of Yara rules that we can benefit from and start scanning for evil on the endpoint straightaway.
 
-Note:
+**Note**:
 
    1. Run `python loki.py -h` to see what options are available.
 
@@ -301,12 +301,58 @@ What is yarGen? yarGen is a generator for YARA rules.
 
 From the README - "*The main principle is the creation of yara rules from strings found in malware files while removing all strings that also appear in goodware files. Therefore yarGen includes a big goodware strings and opcode database as ZIP archives that have to be extracted before the first use.*"
 
-Note: If you are running yarGen on your own system first time, you need to update it first by running the following command: `python3 yarGen.py --update`.
+**Note**: If you are running yarGen on your own system first time, you need to update it first by running the following command: `python3 yarGen.py --update`.
 
+![yarGen](yarGen.png)
 
 This will update the good-opcodes and good-strings DB's from the online repository. This update will take a few minutes. 
 
  Once it has been updated successfully, you'll see the following message at the end of the output.
+
+
+
+
+To use yarGen to generate a Yara rule for file 2, you can run the following command:
+
+```python3 yarGen.py -m /home/cmnatic/suspicious-files/file2 --excludegood -o /home/cmnatic/suspicious-files/file2.yar ```
+
+A brief explanation of the parameters above:
+- `-m` is the path to the files you want to generate rules for
+- `--excludegood` force to exclude all goodware strings (these are strings found in legitimate software and can increase false positives)
+- `-o` location & name you want to output the Yara rule
+
+If all is well, you should see the following output.
+
+![py](py.png)
+
+1. From within the root of the suspicious files directory, running command below to test Yara and your Yara rule against file 2: 
+   
+   ```yara file2.yar file2/1ndex.php```
+
+2. Yara rule flag file 2
+   
+   ![flag](flag.png)
+
+3. Copy the Yara rule  into the Loki signatures directory:
+   
+   ```cp file2.yar ~/tools/Loki/signature-base/yara```
+
+   ![cp](cp.png)
+
+4. Test the Yara rule with Loki, and run the command below:
+
+	```python ~/tools/Loki/loki.py -p ~/suspicious-files/file2```
+
+	![result](result.png)
+
+
+**Note**: Another tool created to assist with this is called [yarAnalyzer](https://github.com/Neo23x0/yarAnalyzer/) (created by Florian Roth). We will not examine that tool in this room, but you should read up on it, especially if you decide to start creating your own Yara rules. 
+
+**Further Reading on creating Yara rules and using yarGen:**
+
+- https://www.bsk-consulting.de/2015/02/16/write-simple-sound-yara-rules/
+- https://www.bsk-consulting.de/2015/10/17/how-to-write-simple-but-sound-yara-rules-part-2/
+- https://www.bsk-consulting.de/2016/04/15/how-to-write-simple-but-sound-yara-rules-part-3/
 
 
 ## 10. Valhalla
