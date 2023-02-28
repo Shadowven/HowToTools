@@ -47,6 +47,56 @@ OpenVAS有多种安装方法，推荐在Docker容器中运行 as we don't have t
     https://websiteforstudents.com/how-to-install-and-configure-openvas-on-ubuntu-18-04-16-04/
     https://www.agix.com.au/installing-openvas-on-kali-in-2020/
 
+这里仅提供在Cent0S 8上的安装教程：
+
+1. Disable SELinux
+   
+   OpenVAS (GVM) will complain if you leave SELinux enabled so disable it using the following command：
+
+   `sed -i 's/=enforcing/=disabled/' /etc/selinux/config`
+
+   **NOTE**: Need to be reboot!重启才能生效
+
+   We also can edit the /etc/selinux/config text file with our persistent setting, either enforcing, permissive, or disabled. By default this file appears as shown below.
+   
+   ```
+    #This file controls the state of SELinux on the system.
+    # SELINUX= can take one of these three values:
+    #     enforcing - SELinux security policy is enforced.
+    #     permissive - SELinux prints warnings instead of enforcing.
+    #     disabled - No SELinux policy is loaded.
+    SELINUX=enforcing
+    # SELINUXTYPE= can take one of three two values:
+    #     targeted - Targeted processes are protected,
+    #     minimum - Modification of targeted policy. Only selected processes are protected.
+    #     mls - Multi Level Security protection.
+    SELINUXTYPE=targeted
+   ```
+2. Open the necessary port for OpenVAS web interface right away as well. 打开TCP port 9392, 443 and 80。
+    ```
+    firewall-cmd --zone=public --add-port=9392/tcp --permanent
+    firewall-cmd --reload
+    ```
+
+3. Install the Atomic Yum Repository
+
+   ``` wget -q -O - https://updates.atomicorp.com/installers/atomic | sudo sh```
+
+4. Install the GVM/openvas package
+
+    ```
+    #
+	yum config-manager --set-enabled powertools
+	yum install epel-release
+
+    #
+    yum install gvm
+    ```
+
+5. Configure openvas
+   
+   `gvm-setup`
+
 ### Option 2: Install from Source
 
 有亿点点麻烦，有兴趣的话请移步[INSTALL.MD](https://github.com/greenbone/openvas-scanner/blob/master/INSTALL.md)。
